@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -108,12 +108,11 @@ namespace Simples_Scanner
         {
             HandleProcesso1 = OpenProcess(0x1F0FFF, false, ProcessoUsar.Id);
         }
+  
         void ThreadProximoScanearInt(string[] Enderecos, int Value)
         {
             Desabilitar();
-            try
-            {
-                Limpar();
+                            Limpar();
                 Scaneando = true;
                 foreach (string sEndereco in Enderecos)
                 {
@@ -122,19 +121,14 @@ namespace Simples_Scanner
                         Habilitar();
                         return;
                     }
-                    int Endereco = int.Parse(sEndereco);
-                    int ValorDoEndereco = Memoria.LerInt(Endereco, BitConverter.GetBytes(Value).Length);
+                int Endereco = int.Parse(sEndereco.Replace("0x", ""), System.Globalization.NumberStyles.HexNumber);
+                int ValorDoEndereco = Memoria.LerInt(Endereco, BitConverter.GetBytes(Value).Length);
                     if (ValorDoEndereco == Value)
                     {
                         this.Invoke((MethodInvoker)(() => listBox1.Items.Add("0x" + Endereco.ToString("X"))));
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Ocorreu um error, por favor envie esse error para o gusdnide o mais rapido possivel, Contato Skype: bielzaao \n O Error Está ja foi copiado, simplesmente envie para o gusdnide ou cole em um bloco de notas e poste em algum dos foruns que gusdnide está e marque ele");
-                Clipboard.SetText(ex.Message);
-            }
+          
             Habilitar();
         }
         void ThreadProximoScanearString(string[] Enderecos, string Value)
@@ -151,7 +145,7 @@ namespace Simples_Scanner
                         Habilitar();
                         return;
                     }
-                    int Endereco = int.Parse(sEndereco);
+                    int Endereco = int.Parse(sEndereco, System.Globalization.NumberStyles.HexNumber);
                     string ValorDoEndereco = Memoria.LerString(Endereco, Value.Length);
                     if (ValorDoEndereco == Value)
                     {
@@ -266,7 +260,8 @@ namespace Simples_Scanner
         void NovoScanner()
         {
             button3.Enabled = true;
-            tNovoScan(comboBox1.SelectedIndex, textBox1.Text);
+            if (comboBox1.SelectedIndex > -1)
+                tNovoScan(comboBox1.SelectedIndex, textBox1.Text);
         }
         void ProximoScanner()
         {
@@ -335,6 +330,11 @@ namespace Simples_Scanner
         {
             if (listBox1.Items.Count < 1)
                 contextMenuStrip1.Close();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            ProximoScanner();
         }
     }
 }
